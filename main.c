@@ -44,7 +44,7 @@ void menuParola(tabPg_t* tabPg, tabInv_t* tabInv)
             case r_caricaoggetti: tabInv=caricastruttura(tabInv);
                 break;
 
-            case r_aggiungipg: tabPg=aggiungipg(tabPg);
+            case r_aggiungipg:    tabPg=aggiungipg(tabPg);
                 break;
 
             case r_eliminapg: tabPg=eliminaPg(tabPg);
