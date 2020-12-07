@@ -17,13 +17,12 @@ int main() {
 // il main è il modulo client contiene l'interfaccia utente menu
 
     setbuf(stdout,0);
-    FILE* fileinventario;
+    //FILE* fileinventario;
     tabPg_t* tabPg;
     tabInv_t* tabInv;
     menuParola(tabPg,tabInv);
     return 0;
 
-    return 0;
 }
 
 void menuParola(tabPg_t* tabPg, tabInv_t* tabInv)
@@ -64,7 +63,7 @@ void menuParola(tabPg_t* tabPg, tabInv_t* tabInv)
             case r_ricercaoggetto: ricercaoggetto(tabInv);
                 break;
 
-            case r_stampapg: stampaListaPg(tabPg);
+            case r_stampapg:  stampaListaPg(tabPg);
             break;
             case r_oggetto: stampaOggetto(tabInv);
             break;
