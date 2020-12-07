@@ -14,7 +14,7 @@ comando_e leggicomando();
 
 int main() {
 
-// il main è il modulo client contiene l'interfaccia utente menu
+// il main è il modulo client contiene l'interfaccia utente/ menu
 
     setbuf(stdout,0);
     //FILE* fileinventario;
