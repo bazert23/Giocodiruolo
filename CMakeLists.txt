@@ -3,4 +3,4 @@ project(Gioco_di_ruolo C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(Gioco_di_ruolo main.c)
+add_executable(Gioco_di_ruolo main.c personaggio.c personaggio.h inventario.c inventario.h)
