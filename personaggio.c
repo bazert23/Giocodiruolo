@@ -164,7 +164,11 @@ void ricerca_per_codicePg( tabPg_t*  tabPg)
     if(strcmp(pchiave.codice,"-1")==0)
         printf("Personaggio non trovato\n");
     else
-    stampainfo(stdout,pchiave);
+   // stampainfo(stdout,pchiave);
+    {
+        stampainfo2(stdout,pchiave);
+        //stampaStat(stdout,pchiave);
+    }
 }
 pg_t ricerca_per_codice(link head)
 {
@@ -190,4 +194,221 @@ void stampainfo(FILE* fp,pg_t p)
 {
     fprintf(fp,"%s %s %s %d %d %d %d %d %d \n", p.codice, p.nome,p.classe, p.stat.hp,
             p.stat.mp,p.stat.atk,p.stat.def,p.stat.mag,p.stat.spr);
+}
+void stampainfo2(FILE* fp,pg_t p)
+{
+    fprintf(fp,"%s %s %s\n", p.codice, p.nome,p.classe);
+}
+void stampaInventarioPg(FILE *fp, pg_t pg)
+{
+    int i;
+    int j=0;
+    i=0;
+
+
+    while(j<8 &&i<pg.equip->inUso ) {
+        if (pg.equip->vettEq[j] != NULL) {
+            fprintf(fp, "%s %s %d %d %d %d %d %d\n", pg.equip->vettEq[j]->nome, pg.equip->vettEq[j]->tipo,
+                    pg.equip->vettEq[j]->stateq.hp,
+                    pg.equip->vettEq[j]->stateq.mp, pg.equip->vettEq[j]->stateq.atk,
+                    pg.equip->vettEq[j]->stateq.def,
+                    pg.equip->vettEq[j]->stateq.mag, pg.equip->vettEq[j]->stateq.mag);
+            i++;
+        }
+        j++;
+    }
+}
+void dettaglipg(tabPg_t* tabPg,tabInv_t *tabInv) {
+    pg_t pchiave = ricerca_per_codice(tabPg->headPg);
+    if (strcmp(pchiave.codice, "-1") == 0)
+        printf("Personaggio non trovato\n");
+    else
+    {
+        stampainfo2(stdout, pchiave);
+        tabPg=aggiornastat(tabPg,pchiave);
+       // tabPg=calcolastat(tabPg,tabInv);
+       // stampaStat(stdout,pchiave);
+        stampaInventarioPg(stdout,pchiave);
+    }
+
+}
+tabPg_t* aggiungi_rimuovi(tabPg_t *tabPg, tabInv_t *tabInv) {
+
+    int scelta;
+    char personaggio[MAXLEN+1];
+
+    printf("Premi 1 per aggiungere un oggetto all'equipaggiamento del personaggio\n");
+    printf("Premi 2 per eliminare un oggetto dall'equipaggiamento del personaggio\n");
+
+    scanf("%d",&scelta);
+    switch (scelta)
+    {
+        /*aggigiungioggetto();*/
+        case 1:  printf("Aggiungi\n");
+            pg_t personaggio_damodificare=ricerca_per_codice(tabPg->headPg);
+                if(strcmp(personaggio_damodificare.codice,"-1")==0)
+                    printf("Personaggio non trovato\n");
+                else {
+                    tabPg->headPg = aggiungiunoggetto(tabPg, tabInv, personaggio_damodificare);
+                }
+            break;
+            /*eliminaoggetto();*/
+        case 2:  printf("Elimina\n");
+            pg_t personaggio_damodificarer=ricerca_per_codice(tabPg->headPg);
+            if(strcmp(personaggio_damodificarer.codice,"-1")==0)
+                printf("Personaggio non trovato\n");
+            else {
+                tabPg->headPg = rimuoviunoggetto(tabPg, tabInv, personaggio_damodificarer);
+            }
+            break;
+        default: printf("Errore");
+            break;
+
+    }
+    return  tabPg;
+
+}
+link aggiungiunoggetto(tabPg_t *tabPg, tabInv_t *tabInv, pg_t personaggio_damodificare) {
+
+
+    inv_t* oggetto_da_aggiungere=ricerca_per_codice_oggetto(tabInv);
+    if(oggetto_da_aggiungere!=NULL) {
+        int k = 0;
+
+        for (k = 0; k < 8; k++) {
+            if (personaggio_damodificare.equip->mark[k] == 0) {
+                if (personaggio_damodificare.equip->vettEq[k] != NULL) {
+                    personaggio_damodificare.equip->vettEq[k] = oggetto_da_aggiungere;
+                    personaggio_damodificare.equip->mark[k] = 1;
+                    personaggio_damodificare.equip->inUso++;
+                    break;
+                } else {
+                    personaggio_damodificare.equip->vettEq[k] = malloc(sizeof(inv_t));
+                    personaggio_damodificare.equip->vettEq[k] = oggetto_da_aggiungere;
+                    personaggio_damodificare.equip->mark[k] = 1;
+                    personaggio_damodificare.equip->inUso++;
+                    break;
+                }
+
+                personaggio_damodificare.equip->inUso++;
+            }
+        }
+
+        /*else
+        {
+            printf("Inventario pieno");
+        }*/
+        stampainfo2(stdout, personaggio_damodificare);
+        stampaInventarioPg(stdout, personaggio_damodificare);
+    }
+    else printf("Oggetto non trovato\n");
+
+    return tabPg->headPg;
+}
+
+
+link rimuoviunoggetto(tabPg_t *tabPg, tabInv_t *tabInv,pg_t personaggio_damodificare) {
+
+    int i;
+    int j;
+    inv_t* oggetto_da_rimuovere=ricerca_per_codice_oggetto(tabInv);
+    if(oggetto_da_rimuovere!=NULL) {
+
+        if (personaggio_damodificare.equip->inUso > 0) {
+            // personaggio_damodificare.equip->vettEq[personaggio_damodificare.equip->inUso] = oggetto_da_rimuovere;
+            for (i = 0; i < personaggio_damodificare.equip->inUso; i++) {
+                if (strcmp(personaggio_damodificare.equip->vettEq[i]->nome, oggetto_da_rimuovere->nome) == 0) {
+                    personaggio_damodificare.equip->vettEq[i] = NULL;
+                    //personaggio_damodificare.equip->vettEq[i]= malloc(sizeof(inv_t));
+                    personaggio_damodificare.equip->mark[i] = 0;
+                    //strcpy(personaggio_damodificare.equip->vettEq[i]->nome,"vuoto");
+                }
+            }
+            personaggio_damodificare.equip->inUso--;
+
+
+        } else {
+            printf("Inventario vuoto");
+        }
+        stampainfo2(stdout, personaggio_damodificare);
+        stampaInventarioPg(stdout, personaggio_damodificare);
+    }
+    else printf("Oggetto non trovato\n");
+    return tabPg->headPg;
+
+}
+
+tabPg_t *aggiornastat(tabPg_t *tabPg, pg_t pgchiave)
+{
+    int i=0,j=0;
+
+    while(j<8 &&i<pgchiave.equip->inUso ) {
+        if (pgchiave.equip->vettEq[j] != NULL) {
+            pgchiave.stat.hp+=pgchiave.equip->vettEq[j]->stateq.hp;
+            pgchiave.stat.mp+=pgchiave.equip->vettEq[j]->stateq.mp;
+            pgchiave.stat.atk+=pgchiave.equip->vettEq[j]->stateq.atk;
+            pgchiave.stat.def+=pgchiave.equip->vettEq[j]->stateq.def;
+            pgchiave.stat.mag+=pgchiave.equip->vettEq[j]->stateq.mag;
+            pgchiave.stat.spr+=pgchiave.equip->vettEq[j]->stateq.spr;
+            i++;
+        }
+        j++;
+    }
+    stampaStat(stdout,pgchiave);
+    return tabPg;
+}
+
+tabPg_t *calcolastat(tabPg_t *tabPg) {
+
+    pg_t pgchiave= ricerca_per_codice(tabPg->headPg);
+    if(strcmp(pgchiave.codice,"-1")==0)
+        printf("Personaggio non trovato\n");
+    else {
+        int i = 0, j = 0;
+
+
+        while (j < 8 && i < pgchiave.equip->inUso) {
+            if (pgchiave.equip->vettEq[j] != NULL) {
+                pgchiave.stat.hp += pgchiave.equip->vettEq[j]->stateq.hp;
+                pgchiave.stat.mp += pgchiave.equip->vettEq[j]->stateq.mp;
+                pgchiave.stat.atk += pgchiave.equip->vettEq[j]->stateq.atk;
+                pgchiave.stat.def += pgchiave.equip->vettEq[j]->stateq.def;
+                pgchiave.stat.mag += pgchiave.equip->vettEq[j]->stateq.mag;
+                pgchiave.stat.spr += pgchiave.equip->vettEq[j]->stateq.spr;
+                i++;
+            }
+            j++;
+        }
+
+
+        stampaStat(stdout, pgchiave);
+    }
+    return tabPg;
+}
+void stampaStat(FILE *fp, pg_t p) {
+
+    int standard = 0;
+    if (p.stat.hp > 0) {
+        fprintf(fp, "HP:%d\n", p.stat.hp);
+    } else printf("HP: %d\n", standard);
+
+    if (p.stat.mp > 0) {
+        fprintf(fp, "MP:%d\n", p.stat.mp);
+    } else printf("MP: %d", standard);
+
+    if (p.stat.atk > 0) {
+        fprintf(fp, "ATK:%d\n", p.stat.atk);
+    } else printf("ATK: %d", standard);
+
+
+    if (p.stat.def > 0) {
+        fprintf(fp, "DEF:%d\n", p.stat.def);
+    } else printf("DEF: %d", standard);
+
+    if (p.stat.mag > 0) {
+        fprintf(fp, "MAG:%d\n", p.stat.mag);
+    } else printf("MAG: %d", standard);
+    if (p.stat.spr > 0) {
+        fprintf(fp, "SPR:%d\n", p.stat.spr);
+    } else printf("SPR: %d", standard);
 }

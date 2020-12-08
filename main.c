@@ -7,7 +7,7 @@
 #define MAX 30
 #define MAXLEN 50
 
-typedef enum { r_caricapg,r_caricaoggetti,r_aggiungipg, r_eliminapg,r_ricerca,r_modifica,r_calcolastat,r_ricercaoggetto,r_stampapg,r_oggetto,r_fine,r_err} comando_e;
+typedef enum { r_caricapg,r_caricastruttura,r_aggiungipg, r_eliminapg,r_ricerca,r_dettaglipg,r_modifica,r_calcolastat,r_ricercaoggetto,r_stampapg,r_oggetto,r_fine,r_err} comando_e;
 void menuParola(tabPg_t* tabPg,tabInv_t* tabInv);
 void Tolower(char cmd[MAX+1]);
 comando_e leggicomando();
@@ -41,7 +41,7 @@ void menuParola(tabPg_t* tabPg, tabInv_t* tabInv)
                                 tabPg=inializzainventariopg(tabPg);
                 break;
 
-            case r_caricaoggetti: tabInv=caricastruttura(tabInv);
+            case r_caricastruttura: tabInv=caricastruttura(tabInv);
                 break;
 
             case r_aggiungipg:    tabPg=aggiungipg(tabPg);
@@ -52,12 +52,13 @@ void menuParola(tabPg_t* tabPg, tabInv_t* tabInv)
 
             case r_ricerca: ricerca_per_codicePg(tabPg);
                 break;
-
-
-            case r_modifica: /*tabPg=aggiungi_rimuovi(tabPg,tabInv);*/
+             case r_dettaglipg: dettaglipg(tabPg,tabInv);
                 break;
 
-            case r_calcolastat: /*tabPg=calcolastat(tabPg,tabInv);*/
+            case r_modifica: tabPg=aggiungi_rimuovi(tabPg,tabInv);
+                break;
+
+            case r_calcolastat: tabPg=calcolastat(tabPg);
                 break;
 
             case r_ricercaoggetto: ricercaoggetto(tabInv);
@@ -84,8 +85,8 @@ comando_e leggicomando()
 {
     comando_e comando;
     char cmd[MAX+1];
-    char* tabella[r_err]={"caricapg","caricaoggetti","aggiungipg","eliminapg","ricerca","modifica","calcolastat","ricercaoggetto","stampalistapg","stampaoggetto","fine"};
-    printf("Comando (caricapg/caricaoggetti/aggiungipg/eliminapg/ricerca");
+    char* tabella[r_err]={"caricapg","caricastruttura","aggiungipg","eliminapg","ricerca","dettagli","modifica","calcolastat","ricercaoggetto","stampalistapg","stampaoggetto","fine"};
+    printf("Comando (caricapg/caricastruttura/aggiungipg/eliminapg/ricerca/dettagli");
     printf("/modifica/calcolastat/ricercaoggetto/stampalistapg/stampaoggetto/fine): ");
     scanf("%s",cmd);
     Tolower(cmd);
