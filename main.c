@@ -99,9 +99,9 @@ comando_e leggicomando()
 
 void Tolower(char cmd[MAX+1])
 {
-    int j=0;
-    for(j=0; cmd[j]!='\0';j++)
+    int p=0;
+    for(p=0; cmd[p]!='\0';p++)
     {
-        cmd[j] = tolower(cmd[j]);
+        cmd[p] = tolower(cmd[p]);
     }
 }
